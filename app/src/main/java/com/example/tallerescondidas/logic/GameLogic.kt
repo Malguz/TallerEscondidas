@@ -10,7 +10,23 @@ object GameLogic{
   *  @param: tiempoUsadoSegundos
  *   @param: diferenciaAngularGrados
 */
-    fun calcularPuntaje(tiempoUsadoSegundos: Int, diferenciaAngularGrados: Double ): Int{
+
+
+
+/*     Calcula la diferencia angular entre entre dos angulos de 0-360
+* ej que los anulos 340 y 10 estan a 20 grados de diferencia
+ */
+fun calcularDiferenciaAngular(anguloActual: Float, anguloObjetivo: Float): Double {
+    val  diferencia = Math.abs(anguloActual - anguloObjetivo).toDouble()
+    return if (diferencia > 180) 360 - diferencia else diferencia
+}
+
+/* Se genera una direccion del objetivo aleatroia */
+
+    fun generarDireccionObjetivo(): Float{
+        return(0..359).random().toFloat()
+    }
+fun calcularPuntaje(tiempoUsadoSegundos: Int, diferenciaAngularGrados: Double ): Int{
         var puntaje = PUNTAJE_BASE
         puntaje -= tiempoUsadoSegundos * PENALIZACION_POR_SEGUNDO
         puntaje -= (diferenciaAngularGrados * PENALIZACION_POR_GRADO).toInt()

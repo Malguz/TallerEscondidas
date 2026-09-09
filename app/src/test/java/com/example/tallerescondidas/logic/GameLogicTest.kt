@@ -15,4 +15,9 @@ class GameLogicTest {
         val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 500, diferenciaAngularGrados = 180.0)
         assertEquals(0, puntaje)
     }
+    @Test
+    fun `diferencia angular considera el cruce por 0 grados`() {
+        val diferencia = GameLogic.calcularDiferenciaAngular(anguloActual = 350f, anguloObjetivo = 10f)
+        assertEquals(20.0, diferencia, 0.01)
+    }
 }

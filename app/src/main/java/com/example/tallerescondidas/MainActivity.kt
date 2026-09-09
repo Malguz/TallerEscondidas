@@ -3,11 +3,14 @@ package com.example.tallerescondidas
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
 import androidx.compose.material3.Text
-
 import androidx.compose.runtime.getValue
 import com.example.tallerescondidas.sensors.OrientationProvider
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.setValue
+import com.example.tallerescondidas.logic.GameLogic
 class MainActivity : ComponentActivity() {
 
     private lateinit var orientationProvider: OrientationProvider
@@ -18,9 +21,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val azimuth by orientationProvider.azimuth
-            Text(text = "Azimut: ${azimuth.toInt()}°")
-        }
-    }
+            var direccionObjetivo by remember { mutableFloatStateOf(GameLogic.generarDireccionObjetivo()) }
+
+            val diferencia = GameLogic.calcularDiferenciaAngular(azimuth, direccionObjetivo)
+            val estado = GameLogic.obtenerEstadoTemperatura(diferencia)
+
+            Column {
+                Text(text = "Azimut actual: ${azimuth.toInt()}°")
+                Text(text = "Direccion objetivo: ${direccionObjetivo.toInt()}°")
+                Text(text = "Diferencia: ${diferencia.toInt()}°")
+                Text(text = "Estado: $estado")
+            }
+    }}
 
     override fun onResume() {
         super.onResume()
