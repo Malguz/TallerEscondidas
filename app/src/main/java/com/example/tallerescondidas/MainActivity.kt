@@ -3,45 +3,32 @@ package com.example.tallerescondidas
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.tallerescondidas.ui.theme.TallerEscondidasTheme
 
+import androidx.compose.material3.Text
+
+import androidx.compose.runtime.getValue
+import com.example.tallerescondidas.sensors.OrientationProvider
 class MainActivity : ComponentActivity() {
+
+    private lateinit var orientationProvider: OrientationProvider
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        orientationProvider = OrientationProvider(this)
+
         setContent {
-            TallerEscondidasTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Escondidas",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            val azimuth by orientationProvider.azimuth
+            Text(text = "Azimut: ${azimuth.toInt()}°")
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hola a todos bienvenido $name!",
-        modifier = modifier
-    )
-}
+    override fun onResume() {
+        super.onResume()
+        orientationProvider.start()
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TallerEscondidasTheme {
-        Greeting("Escondidas")
+    override fun onPause() {
+        super.onPause()
+        orientationProvider.stop()
     }
 }
