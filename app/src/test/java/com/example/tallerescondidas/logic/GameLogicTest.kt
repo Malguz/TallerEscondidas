@@ -1,0 +1,18 @@
+package com.example.tallerescondidas.logic
+
+import org.junit.Assert.*
+import org.junit.Test
+
+class GameLogicTest {
+    @Test
+    fun `puntaje maximo cuando el tiempo y la diferencia angular son cero`() {
+        val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 0, diferenciaAngularGrados = 0.0)
+        assertEquals(1150, puntaje)
+    }
+
+    @Test
+    fun `puntaje nunca es negativo`() {
+        val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 500, diferenciaAngularGrados = 180.0)
+        assertEquals(0, puntaje)
+    }
+}
