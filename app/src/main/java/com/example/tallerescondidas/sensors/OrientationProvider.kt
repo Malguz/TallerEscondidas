@@ -23,6 +23,9 @@ class OrientationProvider (context: Context) : SensorEventListener {
     private val _azimuth = mutableFloatStateOf(0f)
     val azimuth: State<Float> get() = _azimuth
 
+    companion object{
+        private  const val FACTOR_SUAVIZADO = 0.15f
+    }
     fun start() {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)
         sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_GAME)
@@ -32,8 +35,22 @@ class OrientationProvider (context: Context) : SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
+    fun sensoresDisponibles(): Boolean{
+        return accelerometer != null && magnetometer != null
+    }
+
+    private fun suavizarAngulo(anguloActual: Float, anguloNuevo: Float): Float{
+        var diferencia = anguloNuevo - anguloActual
+        if (diferencia > 180) diferencia -=360
+        if (diferencia < -180) diferencia +=360
+        var resultado = anguloActual + FACTOR_SUAVIZADO * diferencia
+        if (resultado< 0) resultado += 360
+        if (resultado >= 360) resultado -= 360
+        return resultado
+    }
 
     override fun onSensorChanged(event: SensorEvent) {
+
         when (event.sensor.type) {
             Sensor.TYPE_ACCELEROMETER -> System.arraycopy(event.values, 0, gravity, 0, gravity.size)
             Sensor.TYPE_MAGNETIC_FIELD -> System.arraycopy(event.values, 0, geomagnetic, 0, geomagnetic.size)
@@ -43,10 +60,11 @@ class OrientationProvider (context: Context) : SensorEventListener {
         if (success) {
             SensorManager.getOrientation(rotationMatrix, orientationValues)
             val azimuthRadians = orientationValues[0]
-            var azimuthDegrees = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
-            if (azimuthDegrees < 0) azimuthDegrees += 360f
-            _azimuth.floatValue = azimuthDegrees
-        }
+            var nuevoAzimuth = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
+            if (nuevoAzimuth < 0) nuevoAzimuth += 360f
+
+            _azimuth.floatValue = suavizarAngulo(_azimuth.floatValue, nuevoAzimuth)
+          }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
