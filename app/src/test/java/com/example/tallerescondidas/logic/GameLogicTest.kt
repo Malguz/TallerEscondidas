@@ -4,6 +4,13 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class GameLogicTest {
+
+   @Test
+   fun `tiempo agotado cuando llega a cero`(){
+       assertEquals(true, GameLogic.tiempoAgotado(0))
+       assertEquals(false, GameLogic.tiempoAgotado(5))
+   }
+
     @Test
     fun `puntaje maximo cuando el tiempo y la diferencia angular son cero`() {
         val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 0, diferenciaAngularGrados = 0.0)

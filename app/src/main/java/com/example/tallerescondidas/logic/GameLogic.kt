@@ -11,7 +11,9 @@ object GameLogic{
  *   @param: diferenciaAngularGrados
 */
 
-
+fun tiempoAgotado (tiempoRestanteSeg: Int): Boolean{
+    return tiempoRestanteSeg <= 0
+}
 
 /*     Calcula la diferencia angular entre entre dos angulos de 0-360
 * ej que los anulos 340 y 10 estan a 20 grados de diferencia
