@@ -1,3 +1,4 @@
+
 package com.example.tallerescondidas
 
 import android.os.Bundle
@@ -43,16 +44,12 @@ class MainActivity : ComponentActivity() {
         orientationProvider = OrientationProvider(this)
 
         setContent {
-            // Envolvemostodo en el tema de la app colores, tipografía
             TallerEscondidasTheme {
-                // Box con fondo de color: es el "lienzo" que cubre toda la pantalla
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(FondoApp)
                 ) {
-
-
                     PantallaPrincipal(orientationProvider)
                 }
             }
@@ -69,14 +66,14 @@ class MainActivity : ComponentActivity() {
         orientationProvider.stop()
     }
 }
-// Convierte segundos (ej: 45) al formato "00:45"
+
 fun formatoTiempo(segundos: Int): String {
     val minutos = segundos / 60
     val segs = segundos % 60
     return "%02d:%02d".format(minutos, segs)
 }
 
-// Convierte un ángulo (0-359°) al nombre del punto cardinal más cercano
+// Convierte un ángulo de 0 a 359 grados al punto cardinal más cercano.
 fun cardinalDe(angulo: Float): String {
     val a = ((angulo % 360) + 360) % 360
     return when {
@@ -91,7 +88,6 @@ fun cardinalDe(angulo: Float): String {
     }
 }
 
-// Caja de datos para el banner de temperatura (fondo, texto, ícono, mensaje)
 data class DatosEstado(
     val fondo: Color,
     val texto: Color,
@@ -114,7 +110,6 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
 
     Column(modifier = Modifier.fillMaxSize()) {
 
-        // --- SOLO PARA PROBAR — borrar esta fila antes de entregar el proyecto final ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,7 +122,6 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
             TextButton(onClick = { estadoActual = EstadoJuego.DERROTA }) { Text("Derrota") }
         }
 
-        // --- Aquí sigue tu "when" exactamente igual que ya lo tenías ---
         when (estadoActual) {
             EstadoJuego.INICIO -> PantallaInicio(
                 onIniciarClick = { estadoActual = EstadoJuego.JUGANDO }
@@ -158,18 +152,16 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
 @Composable
 fun PantallaInicio(onIniciarClick: () -> Unit) {
 
-    // Controla si se muestra el diálogo emergente de instrucciones
     var mostrarInstrucciones by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()) // permite deslizar si el contenido no cabe
+            .verticalScroll(rememberScrollState())
             .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // --- 1. Encabezado con degradado ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -201,7 +193,6 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // --- 2. Tarjeta de bienvenida ---
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
@@ -227,13 +218,12 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- 3. Fila con dos mini-tarjetas de estadísticas (datos de ejemplo) ---
         Row(modifier = Modifier.fillMaxWidth()) {
             TarjetaEstadistica(
                 icono = Icons.Filled.Timer,
                 etiqueta = "Mejor tiempo",
                 valor = "00:32",
-                modifier = Modifier.weight(1f) // cada tarjeta ocupa la mitad del ancho
+                modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(12.dp))
             TarjetaEstadistica(
@@ -246,7 +236,6 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // --- 4. Botón principal: Nueva partida ---
         Button(
             onClick = onIniciarClick,
             modifier = Modifier
@@ -262,7 +251,6 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // --- 5. Botón secundario: Cómo jugar (abre un diálogo) ---
         OutlinedButton(
             onClick = { mostrarInstrucciones = true },
             modifier = Modifier
@@ -276,7 +264,6 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
         }
     }
 
-    // --- Diálogo emergente con las instrucciones ---
     if (mostrarInstrucciones) {
         AlertDialog(
             onDismissRequest = { mostrarInstrucciones = false },
@@ -297,10 +284,6 @@ fun PantallaInicio(onIniciarClick: () -> Unit) {
     }
 }
 
-
-
-
-// --- Mini tarjeta reutilizable para mostrar una estadística ---
 @Composable
 fun TarjetaEstadistica(
     icono: androidx.compose.ui.graphics.vector.ImageVector,
@@ -393,13 +376,13 @@ fun PantallaJuego(
         }
     }
 }
+
 @Composable
 fun BarraDistancia(diferencia: Double) {
-    // progreso: 0.0 = muy lejos (frío), 1.0 = justo encima del objetivo (caliente)
+    // El progreso representa qué tan cerca está el jugador del objetivo.
     val progreso = (1 - (diferencia / 180.0)).coerceIn(0.0, 1.0).toFloat()
     val tamanoMarcador = 22.dp
 
-    // BoxWithConstraints nos permite conocer "maxWidth": el ancho disponible de este contenedor
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
@@ -407,15 +390,13 @@ fun BarraDistancia(diferencia: Double) {
             .clip(RoundedCornerShape(14.dp))
             .background(Brush.horizontalGradient(listOf(FrioAzul, TibioNaranja, CalienteRojo)))
     ) {
-        // Espacio real que el marcador puede recorrer (el ancho total menos su propio tamaño)
         val espacioDisponible = maxWidth - tamanoMarcador
-        // Cuánto debe moverse hacia la derecha, según el progreso (0.0 a 1.0)
         val desplazamiento = espacioDisponible * progreso
 
         Box(
             modifier = Modifier
-                .align(Alignment.CenterStart) // arranca pegado a la izquierda...
-                .offset(x = desplazamiento)    // ...y lo desplazamos hacia la derecha
+                .align(Alignment.CenterStart)
+                .offset(x = desplazamiento)
                 .size(tamanoMarcador)
                 .clip(CircleShape)
                 .background(Color.White)
@@ -429,6 +410,7 @@ fun BarraDistancia(diferencia: Double) {
         Text("¡Caliente!", fontSize = 11.sp, color = GrisTexto)
     }
 }
+
 @Composable
 fun ChipInfo(
     icono: androidx.compose.ui.graphics.vector.ImageVector,
@@ -437,7 +419,7 @@ fun ChipInfo(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(50)) // 50 = totalmente redondeado (forma de píldora)
+            .clip(RoundedCornerShape(50))
             .background(colorFondo)
             .padding(horizontal = 12.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -475,22 +457,20 @@ fun BarraSuperiorJuego(tiempoRestante: Int, puntaje: Int, onVolverClick: () -> U
 
 @Composable
 fun Brujula(azimuth: Float, direccionObjetivo: Float) {
-    // Ángulo relativo: hacia dónde debe girar la flecha DESDE la orientación actual del teléfono
+    // Calcula el ángulo que debe seguir la flecha desde la orientación actual.
     val anguloRelativo = ((direccionObjetivo - azimuth) + 360f) % 360f
 
     Box(modifier = Modifier.size(220.dp), contentAlignment = Alignment.Center) {
 
         Canvas(modifier = Modifier.fillMaxSize()) {
-            // Círculo de fondo blanco
             drawCircle(color = Color.White, radius = size.minDimension / 2)
-            // Borde gris del círculo
+
             drawCircle(
                 color = Color(0xFFE0E0E0),
                 radius = size.minDimension / 2,
                 style = Stroke(width = 4.dp.toPx())
             )
 
-            // Cálculo de la flecha (misma trigonometría de antes)
             val anguloRadianes = Math.toRadians((anguloRelativo - 90).toDouble())
             val largoLinea = size.minDimension / 2 * 0.75f
             val centroX = size.width / 2
@@ -507,7 +487,6 @@ fun Brujula(azimuth: Float, direccionObjetivo: Float) {
             )
         }
 
-        // Letras cardinales — NO giran, quedan fijas (como una brújula real)
         Text(
             "N", fontWeight = FontWeight.Bold, color = GrisTexto,
             modifier = Modifier
@@ -533,7 +512,6 @@ fun Brujula(azimuth: Float, direccionObjetivo: Float) {
                 .padding(start = 6.dp)
         )
 
-        // Ícono del "personaje escondido" en el centro
         Icon(
             imageVector = Icons.Filled.Pets,
             contentDescription = "Personaje escondido",
@@ -608,7 +586,6 @@ fun PantallaVictoria(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // --- Medallón: círculo de color con el ícono adentro ---
                 Box(
                     modifier = Modifier
                         .size(90.dp)
@@ -635,12 +612,11 @@ fun PantallaVictoria(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // --- Fila de estadísticas del resultado ---
                 Row(modifier = Modifier.fillMaxWidth()) {
                     FilaResultado(
                         icono = Icons.Filled.Timer,
                         etiqueta = "Tiempo usado",
-                        valor = "00:32", // dato de ejemplo (mock)
+                        valor = "00:32",
                         modifier = Modifier.weight(1f)
                     )
                     FilaResultado(
@@ -670,7 +646,6 @@ fun PantallaVictoria(
     }
 }
 
-// --- Mini bloque reutilizable: ícono arriba, valor grande, etiqueta pequeña abajo ---
 @Composable
 fun FilaResultado(
     icono: androidx.compose.ui.graphics.vector.ImageVector,
@@ -711,7 +686,6 @@ fun PantallaDerrota(onReintentarClick: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // --- Medallón rojo con ícono de reloj agotado ---
                 Box(
                     modifier = Modifier
                         .size(90.dp)
@@ -763,3 +737,5 @@ fun PantallaDerrota(onReintentarClick: () -> Unit) {
         }
     }
 }
+
+
