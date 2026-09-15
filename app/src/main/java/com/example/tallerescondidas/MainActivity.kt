@@ -107,6 +107,11 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
     var direccionObjetivo by remember { mutableFloatStateOf(GameLogic.generarDireccionObjetivo()) }
     val diferencia = GameLogic.calcularDiferenciaAngular(azimuth, direccionObjetivo)
     val estadoTemperaturaReal = GameLogic.obtenerEstadoTemperatura(diferencia)
+    LaunchedEffect(diferencia, estadoActual) {
+        if (estadoActual == EstadoJuego.JUGANDO && GameLogic.objetivoEncontrado(diferencia)) {
+            estadoActual = EstadoJuego.VICTORIA
+        }
+    }
     LaunchedEffect(estadoActual) {
         if (estadoActual == EstadoJuego.JUGANDO) {
 
@@ -396,6 +401,13 @@ fun PantallaJuego(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
         )
+        Text(
+            text = "Actual: ${azimuth.toInt()}° | Objetivo: ${direccionObjetivo.toInt()}° | Diferencia: ${diferencia.toInt()}°",
+            fontSize = 12.sp,
+            color = GrisTexto,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -499,7 +511,7 @@ fun BarraSuperiorJuego(tiempoRestante: Int, puntaje: Int, onVolverClick: () -> U
 @Composable
 fun Brujula(azimuth: Float, direccionObjetivo: Float) {
     // Calcula el ángulo que debe seguir la flecha desde la orientación actual.
-    val anguloRelativo = ((direccionObjetivo - azimuth) + 360f) % 360f
+    val anguloRelativo = ((direccionObjetivo - azimuth + 540f) % 360f) - 180f
 
     Box(modifier = Modifier.size(220.dp), contentAlignment = Alignment.Center) {
 

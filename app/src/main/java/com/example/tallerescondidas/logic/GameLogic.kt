@@ -14,10 +14,14 @@ object GameLogic{
 fun tiempoAgotado (tiempoRestanteSeg: Int): Boolean{
     return tiempoRestanteSeg <= 0
 }
+fun objetivoEncontrado(diferenciaAngularGrados: Double): Boolean {
+        return diferenciaAngularGrados <= 5.0
+    }
 
 /*     Calcula la diferencia angular entre entre dos angulos de 0-360
 * ej que los anulos 340 y 10 estan a 20 grados de diferencia
  */
+
 fun calcularDiferenciaAngular(anguloActual: Float, anguloObjetivo: Float): Double {
     val  diferencia = Math.abs(anguloActual - anguloObjetivo).toDouble()
     return if (diferencia > 180) 360 - diferencia else diferencia
