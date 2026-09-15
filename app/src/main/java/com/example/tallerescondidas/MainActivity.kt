@@ -35,6 +35,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import kotlinx.coroutines.delay
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var orientationProvider: OrientationProvider
@@ -161,7 +162,7 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
                 azimuth = azimuth,
                 direccionObjetivo = direccionObjetivo,
                 onReiniciarClick = {
-                    estadoActual = EstadoJuego.INICIO
+                    estadoActual = EstadoJuego.JUGANDO
                     tiempoRestante = 30
                     tiempoUsado = 0
                     puntaje = 1000
@@ -170,11 +171,20 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
 
             EstadoJuego.VICTORIA -> PantallaVictoria(
                 puntaje = puntaje,
-                onJugarDeNuevoClick = { estadoActual = EstadoJuego.INICIO }
+                onJugarDeNuevoClick = {
+                    estadoActual = EstadoJuego.JUGANDO
+                    tiempoRestante = 30
+                    tiempoUsado = 0
+                    puntaje = 1000}
             )
 
             EstadoJuego.DERROTA -> PantallaDerrota(
-                onReintentarClick = { estadoActual = EstadoJuego.INICIO }
+                onReintentarClick = {
+                    estadoActual = EstadoJuego.JUGANDO
+                    tiempoRestante = 30
+                    tiempoUsado = 0
+                    puntaje = 1000
+                }
             )
         }
     }
