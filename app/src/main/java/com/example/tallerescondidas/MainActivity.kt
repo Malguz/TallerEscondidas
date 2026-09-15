@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
-
+import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
 
     private lateinit var orientationProvider: OrientationProvider
@@ -99,15 +99,35 @@ data class DatosEstado(
 fun PantallaPrincipal(orientationProvider: OrientationProvider) {
 
     var estadoActual by remember { mutableStateOf(EstadoJuego.INICIO) }
-    var tiempoRestanteFalso by remember { mutableStateOf(25) }
-    var temperaturaFalsa by remember { mutableStateOf("TIBIO") }
-    var puntajeFalso by remember { mutableStateOf(120) }
-
+    var tiempoRestante by remember { mutableStateOf(30) }
+    var puntaje by remember { mutableStateOf(1000) }
+    var tiempoUsado by remember { mutableStateOf(0) }
     val azimuth by orientationProvider.azimuth
     var direccionObjetivo by remember { mutableFloatStateOf(GameLogic.generarDireccionObjetivo()) }
     val diferencia = GameLogic.calcularDiferenciaAngular(azimuth, direccionObjetivo)
     val estadoTemperaturaReal = GameLogic.obtenerEstadoTemperatura(diferencia)
+    LaunchedEffect(estadoActual) {
+        if (estadoActual == EstadoJuego.JUGANDO) {
 
+            while (tiempoRestante > 0) {
+                delay(1000)
+
+                if (estadoActual == EstadoJuego.JUGANDO) {
+                    tiempoRestante--
+                    tiempoUsado++
+
+                    puntaje = GameLogic.calcularPuntaje(
+                        tiempoUsado,
+                        diferencia
+                    )
+                }
+            }
+
+            if (GameLogic.tiempoAgotado(tiempoRestante)) {
+                estadoActual = EstadoJuego.DERROTA
+            }
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()) {
 
         Row(
@@ -124,21 +144,32 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
 
         when (estadoActual) {
             EstadoJuego.INICIO -> PantallaInicio(
-                onIniciarClick = { estadoActual = EstadoJuego.JUGANDO }
+                onIniciarClick = {
+                    tiempoRestante = 30
+                    tiempoUsado = 0
+                    puntaje = 1000
+                    direccionObjetivo = GameLogic.generarDireccionObjetivo()
+                    estadoActual = EstadoJuego.JUGANDO
+                }
             )
 
             EstadoJuego.JUGANDO -> PantallaJuego(
-                tiempoRestante = tiempoRestanteFalso,
-                puntaje = puntajeFalso,
-                temperatura = temperaturaFalsa,
+                tiempoRestante = tiempoRestante,
+                puntaje = puntaje,
+                temperatura = estadoTemperaturaReal.name,
                 diferencia = diferencia,
                 azimuth = azimuth,
                 direccionObjetivo = direccionObjetivo,
-                onReiniciarClick = { estadoActual = EstadoJuego.INICIO }
+                onReiniciarClick = {
+                    estadoActual = EstadoJuego.INICIO
+                    tiempoRestante = 30
+                    tiempoUsado = 0
+                    puntaje = 1000
+                }
             )
 
             EstadoJuego.VICTORIA -> PantallaVictoria(
-                puntaje = puntajeFalso,
+                puntaje = puntaje,
                 onJugarDeNuevoClick = { estadoActual = EstadoJuego.INICIO }
             )
 
