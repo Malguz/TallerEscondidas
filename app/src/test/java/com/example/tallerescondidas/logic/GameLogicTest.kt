@@ -27,4 +27,9 @@ class GameLogicTest {
         val diferencia = GameLogic.calcularDiferenciaAngular(anguloActual = 350f, anguloObjetivo = 10f)
         assertEquals(20.0, diferencia, 0.01)
     }
+    @Test
+    fun `objetivo encontrado dentro del margen`() {
+        assertEquals(true, GameLogic.objetivoEncontrado(3.0))
+        assertEquals(false, GameLogic.objetivoEncontrado(15.0))
+    }
 }

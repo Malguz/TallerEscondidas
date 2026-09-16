@@ -109,6 +109,7 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
     val estadoTemperaturaReal = GameLogic.obtenerEstadoTemperatura(diferencia)
     LaunchedEffect(diferencia, estadoActual) {
         if (estadoActual == EstadoJuego.JUGANDO && GameLogic.objetivoEncontrado(diferencia)) {
+            puntaje = GameLogic.calcularPuntaje(tiempoUsado, diferencia)
             estadoActual = EstadoJuego.VICTORIA
         }
     }
@@ -171,16 +172,20 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
                     tiempoRestante = 30
                     tiempoUsado = 0
                     puntaje = 1000
+                    direccionObjetivo = GameLogic.generarDireccionObjetivo()
                 }
             )
 
             EstadoJuego.VICTORIA -> PantallaVictoria(
                 puntaje = puntaje,
+                tiempoUsado = tiempoUsado,
                 onJugarDeNuevoClick = {
                     estadoActual = EstadoJuego.JUGANDO
                     tiempoRestante = 30
                     tiempoUsado = 0
-                    puntaje = 1000}
+                    puntaje = 1000
+                    direccionObjetivo= GameLogic.generarDireccionObjetivo()
+                }
             )
 
             EstadoJuego.DERROTA -> PantallaDerrota(
@@ -189,6 +194,7 @@ fun PantallaPrincipal(orientationProvider: OrientationProvider) {
                     tiempoRestante = 30
                     tiempoUsado = 0
                     puntaje = 1000
+                    direccionObjetivo = GameLogic.generarDireccionObjetivo()
                 }
             )
         }
@@ -617,6 +623,7 @@ fun BannerEstado(temperatura: String) {
 @Composable
 fun PantallaVictoria(
     puntaje: Int,
+    tiempoUsado: Int,
     onJugarDeNuevoClick: () -> Unit
 ) {
     Column(
@@ -669,7 +676,7 @@ fun PantallaVictoria(
                     FilaResultado(
                         icono = Icons.Filled.Timer,
                         etiqueta = "Tiempo usado",
-                        valor = "00:32",
+                        valor = formatoTiempo(tiempoUsado),
                         modifier = Modifier.weight(1f)
                     )
                     FilaResultado(
