@@ -17,42 +17,41 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.theme.MaderaMarron
-import com.example.tallerescondidas.ui.theme.Medida
-import com.example.tallerescondidas.ui.theme.TextoOscuro
-import com.example.tallerescondidas.ui.theme.TibioNaranja
-import com.example.tallerescondidas.ui.theme.VerdeBosque
-import com.example.tallerescondidas.ui.theme.VerdePradera
-import com.example.tallerescondidas.ui.theme.VerdePraderaClaro
-
+import com.example.tallerescondidas.ui.theme.BrownWood
+import com.example.tallerescondidas.ui.theme.Measurement
+import com.example.tallerescondidas.ui.theme.DarkText
+import com.example.tallerescondidas.ui.theme.WarmOrange
+import com.example.tallerescondidas.ui.theme.ForestGreen
+import com.example.tallerescondidas.ui.theme.MeadowGreen
+import com.example.tallerescondidas.ui.theme.LightMeadowGreen
 
 @Composable
 fun WormCanvas(
     modifier: Modifier = Modifier,
-    temperatura: String = "FRIO",
-    altura: Dp = Medida.escenario
+    temperature: String = "COLD",
+    height: Dp = Measurement.scene
 ) {
-    val objetivoAsomo = when (temperatura.uppercase()) {
-        "CALIENTE" -> 1f
-        "TIBIO" -> 0.45f
+    val peekTarget = when (temperature.uppercase()) {
+        "HOT" -> 1f
+        "WARM" -> 0.45f
         else -> 0f
     }
 
-    val asomo by animateFloatAsState(
-        targetValue = objetivoAsomo,
+    val peek by animateFloatAsState(
+        targetValue = peekTarget,
         animationSpec = tween(durationMillis = 400),
-        label = "asomoGusanito"
+        label = "wormPeek"
     )
 
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(altura)
+            .height(height)
     ) {
-        val ancho = size.width
-        val alto = size.height
+        val width = size.width
+        val canvasHeight = size.height
 
-        // Cielo
+        // Sky
         drawRect(
             brush = Brush.verticalGradient(
                 listOf(Color(0xFFBFE3F5), Color(0xFFE6F4E0))
@@ -60,119 +59,119 @@ fun WormCanvas(
             size = size
         )
 
-        // Colina del fondo
+        // Background hill
         drawOval(
-            color = VerdePradera.copy(alpha = 0.55f),
-            topLeft = Offset(-ancho * 0.25f, alto * 0.32f),
-            size = Size(ancho * 0.9f, alto * 0.7f)
+            color = MeadowGreen.copy(alpha = 0.55f),
+            topLeft = Offset(-width * 0.25f, canvasHeight * 0.32f),
+            size = Size(width * 0.9f, canvasHeight * 0.7f)
         )
 
-        // Colina principal
+        // Main hill
         drawOval(
-            color = VerdePradera,
-            topLeft = Offset(-ancho * 0.12f, alto * 0.45f),
-            size = Size(ancho * 1.24f, alto * 0.85f)
+            color = MeadowGreen,
+            topLeft = Offset(-width * 0.12f, canvasHeight * 0.45f),
+            size = Size(width * 1.24f, canvasHeight * 0.85f)
         )
 
-        // Luz sobre el cesped
+        // Light on the grass
         drawOval(
-            color = VerdePraderaClaro.copy(alpha = 0.45f),
-            topLeft = Offset(ancho * 0.05f, alto * 0.5f),
-            size = Size(ancho * 0.55f, alto * 0.22f)
+            color = LightMeadowGreen.copy(alpha = 0.45f),
+            topLeft = Offset(width * 0.05f, canvasHeight * 0.5f),
+            size = Size(width * 0.55f, canvasHeight * 0.22f)
         )
 
-        // Madriguera
-        val madrigueraCentro = Offset(ancho * 0.5f, alto * 0.72f)
+        // Burrow
+        val burrowCenter = Offset(width * 0.5f, canvasHeight * 0.72f)
         drawOval(
-            color = MaderaMarron.copy(alpha = 0.85f),
-            topLeft = Offset(madrigueraCentro.x - ancho * 0.11f, madrigueraCentro.y - alto * 0.05f),
-            size = Size(ancho * 0.22f, alto * 0.12f)
+            color = BrownWood.copy(alpha = 0.85f),
+            topLeft = Offset(burrowCenter.x - width * 0.11f, burrowCenter.y - canvasHeight * 0.05f),
+            size = Size(width * 0.22f, canvasHeight * 0.12f)
         )
         drawOval(
             color = Color(0xFF3B2A18),
-            topLeft = Offset(madrigueraCentro.x - ancho * 0.085f, madrigueraCentro.y - alto * 0.035f),
-            size = Size(ancho * 0.17f, alto * 0.09f)
+            topLeft = Offset(burrowCenter.x - width * 0.085f, burrowCenter.y - canvasHeight * 0.035f),
+            size = Size(width * 0.17f, canvasHeight * 0.09f)
         )
 
-        // Gusanito saliendo de la madriguera
-        if (asomo > 0.02f) {
-            dibujarGusanito(
-                base = Offset(madrigueraCentro.x, madrigueraCentro.y),
-                ancho = ancho,
-                alto = alto,
-                asomo = asomo
+        // Worm peaking out of the burrow
+        if (peek > 0.02f) {
+            drawWorm(
+                base = Offset(burrowCenter.x, burrowCenter.y),
+                width = width,
+                height = canvasHeight,
+                peek = peek
             )
         }
 
-        // Matorrales delante, para dar profundidad
-        dibujarMatorral(Offset(ancho * 0.16f, alto * 0.80f), ancho * 0.11f)
-        dibujarMatorral(Offset(ancho * 0.82f, alto * 0.76f), ancho * 0.09f)
-        dibujarMatorral(Offset(ancho * 0.62f, alto * 0.90f), ancho * 0.13f)
+        // Bushes in front, for depth
+        drawBush(Offset(width * 0.16f, canvasHeight * 0.80f), width * 0.11f)
+        drawBush(Offset(width * 0.82f, canvasHeight * 0.76f), width * 0.09f)
+        drawBush(Offset(width * 0.62f, canvasHeight * 0.90f), width * 0.13f)
     }
 }
 
-private fun DrawScope.dibujarGusanito(
+private fun DrawScope.drawWorm(
     base: Offset,
-    ancho: Float,
-    alto: Float,
-    asomo: Float
+    width: Float,
+    height: Float,
+    peek: Float
 ) {
-    val radioCabeza = ancho * 0.07f
-    val subida = alto * 0.20f * asomo
-    val centroCabeza = Offset(base.x, base.y - subida - radioCabeza * 0.2f)
+    val headRadius = width * 0.07f
+    val rise = height * 0.20f * peek
+    val headCenter = Offset(base.x, base.y - rise - headRadius * 0.2f)
 
-    // Cuerpo
+    // Body
     drawOval(
-        color = TibioNaranja.copy(alpha = 0.9f),
-        topLeft = Offset(base.x - ancho * 0.045f, centroCabeza.y),
-        size = Size(ancho * 0.09f, subida + alto * 0.04f)
+        color = WarmOrange.copy(alpha = 0.9f),
+        topLeft = Offset(base.x - width * 0.045f, headCenter.y),
+        size = Size(width * 0.09f, rise + height * 0.04f)
     )
 
-    // Cabeza
-    drawCircle(color = TibioNaranja, radius = radioCabeza, center = centroCabeza)
+    // Head
+    drawCircle(color = WarmOrange, radius = headRadius, center = headCenter)
 
-    // Ojos
-    val separacion = radioCabeza * 0.42f
-    listOf(-separacion, separacion).forEach { dx ->
+    // Eyes
+    val separation = headRadius * 0.42f
+    listOf(-separation, separation).forEach { dx ->
         drawCircle(
             color = Color.White,
-            radius = radioCabeza * 0.26f,
-            center = Offset(centroCabeza.x + dx, centroCabeza.y - radioCabeza * 0.12f)
+            radius = headRadius * 0.26f,
+            center = Offset(headCenter.x + dx, headCenter.y - headRadius * 0.12f)
         )
         drawCircle(
-            color = TextoOscuro,
-            radius = radioCabeza * 0.12f,
-            center = Offset(centroCabeza.x + dx, centroCabeza.y - radioCabeza * 0.12f)
+            color = DarkText,
+            radius = headRadius * 0.12f,
+            center = Offset(headCenter.x + dx, headCenter.y - headRadius * 0.12f)
         )
     }
 
-    // Sonrisa
+    // Smile
     drawArc(
-        color = TextoOscuro,
+        color = DarkText,
         startAngle = 20f,
         sweepAngle = 140f,
         useCenter = false,
-        topLeft = Offset(centroCabeza.x - radioCabeza * 0.4f, centroCabeza.y + radioCabeza * 0.05f),
-        size = Size(radioCabeza * 0.8f, radioCabeza * 0.5f),
+        topLeft = Offset(headCenter.x - headRadius * 0.4f, headCenter.y + headRadius * 0.05f),
+        size = Size(headRadius * 0.8f, headRadius * 0.5f),
         style = Stroke(width = 4f, cap = StrokeCap.Round)
     )
 }
 
-private fun DrawScope.dibujarMatorral(centro: Offset, radio: Float) {
-    drawCircle(color = VerdeBosque, radius = radio, center = centro)
+private fun DrawScope.drawBush(center: Offset, radius: Float) {
+    drawCircle(color = ForestGreen, radius = radius, center = center)
     drawCircle(
-        color = VerdeBosque,
-        radius = radio * 0.8f,
-        center = Offset(centro.x - radio * 0.85f, centro.y + radio * 0.15f)
+        color = ForestGreen,
+        radius = radius * 0.8f,
+        center = Offset(center.x - radius * 0.85f, center.y + radius * 0.15f)
     )
     drawCircle(
-        color = VerdeBosque,
-        radius = radio * 0.7f,
-        center = Offset(centro.x + radio * 0.85f, centro.y + radio * 0.2f)
+        color = ForestGreen,
+        radius = radius * 0.7f,
+        center = Offset(center.x + radius * 0.85f, center.y + radius * 0.2f)
     )
     drawCircle(
-        color = VerdePradera.copy(alpha = 0.6f),
-        radius = radio * 0.45f,
-        center = Offset(centro.x - radio * 0.2f, centro.y - radio * 0.35f)
+        color = MeadowGreen.copy(alpha = 0.6f),
+        radius = radius * 0.45f,
+        center = Offset(center.x - radius * 0.2f, center.y - radius * 0.35f)
     )
 }

@@ -19,88 +19,90 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.theme.CalienteRojo
-import com.example.tallerescondidas.ui.theme.Espacio
-import com.example.tallerescondidas.ui.theme.FrioAzul
-import com.example.tallerescondidas.ui.theme.Medida
-import com.example.tallerescondidas.ui.theme.PapelCrema
-import com.example.tallerescondidas.ui.theme.TextoSuave
-import com.example.tallerescondidas.ui.theme.TibioNaranja
-
+import com.example.tallerescondidas.ui.theme.HotRed
+import com.example.tallerescondidas.ui.theme.Spacing
+import com.example.tallerescondidas.ui.theme.ColdBlue
+import com.example.tallerescondidas.ui.theme.Measurement
+import com.example.tallerescondidas.ui.theme.CreamPaper
+import com.example.tallerescondidas.ui.theme.SoftText
+import com.example.tallerescondidas.ui.theme.WarmOrange
 
 @Composable
 fun TemperatureIndicator(
-    estado: String,
+    state: String,
     modifier: Modifier = Modifier,
-    diferencia: Double = -1.0
+    difference: Double = -1.0
 ) {
-    val color = colorDeTemperatura(estado)
+    val color = getTemperatureColor(state)
 
-    val posicion = if (diferencia >= 0) {
-        // 0 grados = extremo caliente, 180 grados = extremo frio
-        (1.0 - (diferencia / 180.0)).coerceIn(0.05, 0.95).toFloat()
+    val position = if (difference >= 0) {
+        // 0 degrees = hot end, 180 degrees = cold end
+        (1.0 - (difference / 180.0)).coerceIn(0.05, 0.95).toFloat()
     } else {
-        when (estado.uppercase()) {
-            "CALIENTE" -> 0.88f
-            "TIBIO" -> 0.55f
+        when (state.uppercase()) {
+            "HOT" -> 0.88f
+            "WARM" -> 0.55f
             else -> 0.15f
         }
     }
 
-    val posicionAnimada by animateFloatAsState(
-        targetValue = posicion,
+    val animatedPosition by animateFloatAsState(
+        targetValue = position,
         animationSpec = tween(durationMillis = 300),
-        label = "marcador"
+        label = "marker"
     )
 
-    val colorAnimado by animateColorAsState(
+    val animatedColor by animateColorAsState(
         targetValue = color,
         animationSpec = tween(durationMillis = 300),
-        label = "colorTemperatura"
+        label = "temperatureColor"
     )
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(PapelCrema)
-            .padding(Espacio.md)
+            .background(CreamPaper)
+            .padding(Spacing.md)
     ) {
         Text(
-            text = textoDeEstado(estado),
+            text = getStateText(state),
             style = MaterialTheme.typography.headlineMedium,
-            color = colorAnimado,
+            color = animatedColor,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(Espacio.sm))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Medida.termometro + 18.dp)
+                .height(Measurement.thermometer + 18.dp)
         ) {
-            val alturaBarra = Medida.termometro.toPx()
-            val y = alturaBarra / 2f + 6f
+            val barHeight = Measurement.thermometer.toPx()
+            val y = barHeight / 2f + 6f
 
             drawRoundRect(
                 brush = Brush.horizontalGradient(
-                    listOf(FrioAzul, TibioNaranja, CalienteRojo)
+                    listOf(ColdBlue, WarmOrange, HotRed)
                 ),
                 topLeft = Offset(0f, 6f),
-                size = androidx.compose.ui.geometry.Size(size.width, alturaBarra),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(alturaBarra / 2f)
+                size = Size(size.width, barHeight),
+                cornerRadius = CornerRadius(barHeight / 2f)
             )
 
-            val x = size.width * posicionAnimada
+            val x = size.width * animatedPosition
 
-            drawCircle(color = Color.White, radius = alturaBarra * 0.78f, center = Offset(x, y))
-            drawCircle(color = colorAnimado, radius = alturaBarra * 0.52f, center = Offset(x, y))
+            drawCircle(color = Color.White, radius = barHeight * 0.78f, center = Offset(x, y))
+            drawCircle(color = animatedColor, radius = barHeight * 0.52f, center = Offset(x, y))
         }
 
         Row(
@@ -108,30 +110,30 @@ fun TemperatureIndicator(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Etiqueta("Muy frio")
-            Etiqueta("Tibio")
-            Etiqueta("Caliente")
+            Label("Muy frio")
+            Label("Tibio")
+            Label("Caliente")
         }
     }
 }
 
 @Composable
-private fun Etiqueta(texto: String) {
+private fun Label(text: String) {
     Text(
-        text = texto,
+        text = text,
         style = MaterialTheme.typography.labelSmall,
-        color = TextoSuave
+        color = SoftText
     )
 }
 
-private fun textoDeEstado(estado: String): String = when (estado.uppercase()) {
-    "CALIENTE" -> "Muy cerca"
-    "TIBIO" -> "Te acercas"
+private fun getStateText(state: String): String = when (state.uppercase()) {
+    "HOT" -> "Muy cerca"
+    "WARM" -> "Te acercas"
     else -> "Estas lejos"
 }
 
-fun colorDeTemperatura(estado: String): Color = when (estado.uppercase()) {
-    "CALIENTE" -> CalienteRojo
-    "TIBIO" -> TibioNaranja
-    else -> FrioAzul
+fun getTemperatureColor(state: String): Color = when (state.uppercase()) {
+    "HOT" -> HotRed
+    "WARM" -> WarmOrange
+    else -> ColdBlue
 }

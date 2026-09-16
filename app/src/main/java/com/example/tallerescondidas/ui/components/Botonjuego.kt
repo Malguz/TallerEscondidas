@@ -22,84 +22,83 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.theme.Espacio
-import com.example.tallerescondidas.ui.theme.Medida
-import com.example.tallerescondidas.ui.theme.PapelCrema
-import com.example.tallerescondidas.ui.theme.PapelSombra
-import com.example.tallerescondidas.ui.theme.TextoOscuro
-import com.example.tallerescondidas.ui.theme.VerdeBosque
-import com.example.tallerescondidas.ui.theme.VerdeBosqueOscuro
-
+import com.example.tallerescondidas.ui.theme.Spacing
+import com.example.tallerescondidas.ui.theme.Measurement
+import com.example.tallerescondidas.ui.theme.CreamPaper
+import com.example.tallerescondidas.ui.theme.ShadowPaper
+import com.example.tallerescondidas.ui.theme.DarkText
+import com.example.tallerescondidas.ui.theme.ForestGreen
+import com.example.tallerescondidas.ui.theme.DarkForestGreen
 
 @Composable
-fun BotonJuego(
-    texto: String,
+fun GameButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    icono: ImageVector? = null,
-    colorFondo: Color = VerdeBosque,
-    colorTexto: Color = PapelCrema,
-    colorRelieve: Color = VerdeBosqueOscuro
+    icon: ImageVector? = null,
+    backgroundColor: Color = ForestGreen,
+    textColor: Color = CreamPaper,
+    reliefColor: Color = DarkForestGreen
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(Medida.alturaBoton + Medida.relieveBoton)
+            .height(Measurement.buttonHeight + Measurement.buttonRelief)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Medida.alturaBoton)
-                .offset(y = Medida.relieveBoton)
+                .height(Measurement.buttonHeight)
+                .offset(y = Measurement.buttonRelief)
                 .clip(MaterialTheme.shapes.small)
-                .background(colorRelieve)
+                .background(reliefColor)
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Medida.alturaBoton)
+                .height(Measurement.buttonHeight)
                 .clip(MaterialTheme.shapes.small)
-                .background(colorFondo)
+                .background(backgroundColor)
                 .clickable { onClick() }
-                .padding(horizontal = Espacio.md),
+                .padding(horizontal = Spacing.md),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (icono != null) {
+            if (icon != null) {
                 Icon(
-                    imageVector = icono,
+                    imageVector = icon,
                     contentDescription = null,
-                    tint = colorTexto,
+                    tint = textColor,
                     modifier = Modifier.size(22.dp)
                 )
-                Spacer(modifier = Modifier.width(Espacio.sm))
+                Spacer(modifier = Modifier.width(Spacing.sm))
             }
 
             Text(
-                text = texto,
-                color = colorTexto,
+                text = text,
+                color = textColor,
                 style = MaterialTheme.typography.titleMedium
             )
         }
     }
 }
 
-/** Variante clara para acciones secundarias. */
+/** Light variant for secondary actions. */
 @Composable
-fun BotonJuegoSecundario(
-    texto: String,
+fun SecondaryGameButton(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    icono: ImageVector? = null
+    icon: ImageVector? = null
 ) {
-    BotonJuego(
-        texto = texto,
+    GameButton(
+        text = text,
         onClick = onClick,
         modifier = modifier,
-        icono = icono,
-        colorFondo = PapelCrema,
-        colorTexto = TextoOscuro,
-        colorRelieve = PapelSombra
+        icon = icon,
+        backgroundColor = CreamPaper,
+        textColor = DarkText,
+        reliefColor = ShadowPaper
     )
 }

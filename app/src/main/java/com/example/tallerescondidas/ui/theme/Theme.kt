@@ -13,35 +13,35 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 
-private val EsquemaJuego = lightColorScheme(
-    primary = VerdeBosque,
-    onPrimary = TextoSobreVerde,
-    primaryContainer = VerdePradera,
-    onPrimaryContainer = TextoSobreVerde,
+private val GameScheme = lightColorScheme(
+    primary = ForestGreen,
+    onPrimary = TextOnGreen,
+    primaryContainer = MeadowGreen,
+    onPrimaryContainer = TextOnGreen,
 
-    secondary = TibioNaranja,
-    onSecondary = TextoOscuro,
-    secondaryContainer = TibioNaranjaClaro,
-    onSecondaryContainer = TextoOscuro,
+    secondary = WarmOrange,
+    onSecondary = DarkText,
+    secondaryContainer = LightWarmOrange,
+    onSecondaryContainer = DarkText,
 
-    tertiary = MaderaMarron,
-    onTertiary = PapelCrema,
+    tertiary = BrownWood,
+    onTertiary = CreamPaper,
 
-    background = VerdeCesped,
-    onBackground = TextoOscuro,
+    background = GrassGreen,
+    onBackground = DarkText,
 
-    surface = PapelCrema,
-    onSurface = TextoOscuro,
-    surfaceVariant = VerdeNiebla,
-    onSurfaceVariant = TextoSuave,
+    surface = CreamPaper,
+    onSurface = DarkText,
+    surfaceVariant = MistGreen,
+    onSurfaceVariant = SoftText,
 
-    error = CalienteRojo,
-    onError = PapelCrema,
-    outline = PapelSombra
+    error = HotRed,
+    onError = CreamPaper,
+    outline = ShadowPaper
 )
 
 
-private val FormasJuego = Shapes(
+private val GameShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(14.dp),
     medium = RoundedCornerShape(20.dp),
@@ -50,26 +50,26 @@ private val FormasJuego = Shapes(
 )
 
 @Composable
-fun TallerEscondidasTheme(
+fun HiddenWorkshopTheme(
     darkTheme: Boolean = false,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val vista = LocalView.current
+    val view = LocalView.current
 
-    if (!vista.isInEditMode) {
+    if (!view.isInEditMode) {
         SideEffect {
-            val ventana = (vista.context as Activity).window
-            ventana.statusBarColor = VerdeBosque.toArgb()
-            WindowCompat.getInsetsController(ventana, vista)
+            val window = (view.context as Activity).window
+            window.statusBarColor = ForestGreen.toArgb()
+            WindowCompat.getInsetsController(window, view)
                 .isAppearanceLightStatusBars = false
         }
     }
 
     MaterialTheme(
-        colorScheme = EsquemaJuego,
+        colorScheme = GameScheme,
         typography = Typography,
-        shapes = FormasJuego,
+        shapes = GameShapes,
         content = content
     )
 }

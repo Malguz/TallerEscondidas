@@ -26,131 +26,131 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.components.BotonJuego
-import com.example.tallerescondidas.ui.components.BotonJuegoSecundario
+import com.example.tallerescondidas.ui.components.GameButton
+import com.example.tallerescondidas.ui.components.SecondaryGameButton
 import com.example.tallerescondidas.ui.components.WormCanvas
-import com.example.tallerescondidas.ui.theme.AmarilloEstrella
-import com.example.tallerescondidas.ui.theme.Espacio
-import com.example.tallerescondidas.ui.theme.PapelCrema
-import com.example.tallerescondidas.ui.theme.TextoOscuro
-import com.example.tallerescondidas.ui.theme.TextoSuave
-import com.example.tallerescondidas.ui.theme.VerdeExito
-import com.example.tallerescondidas.ui.theme.VerdeExitoClaro
+import com.example.tallerescondidas.ui.theme.StarYellow
+import com.example.tallerescondidas.ui.theme.Spacing
+import com.example.tallerescondidas.ui.theme.CreamPaper
+import com.example.tallerescondidas.ui.theme.DarkText
+import com.example.tallerescondidas.ui.theme.SoftText
+import com.example.tallerescondidas.ui.theme.SuccessGreen
+import com.example.tallerescondidas.ui.theme.LightSuccessGreen
 
 @Composable
 fun VictoryScreen(
-    puntaje: Int,
-    tiempoTotal: Int,
+    score: Int,
+    totalTime: Int,
     precision: Int,
-    onReiniciar: () -> Unit,
-    onVolverInicio: () -> Unit
+    onRestart: () -> Unit,
+    onBackToStart: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VerdeExitoClaro)
+            .background(LightSuccessGreen)
             .verticalScroll(rememberScrollState())
-            .padding(Espacio.lg),
+            .padding(Spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
         Text(
             text = "Lo encontraste",
             style = MaterialTheme.typography.displayMedium,
-            color = VerdeExito,
+            color = SuccessGreen,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(Espacio.sm))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
         ) {
-            WormCanvas(temperatura = "CALIENTE", altura = 180.dp)
+            WormCanvas(temperature = "HOT", height = 180.dp)
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        // Puntaje: el dato protagonista
+        // Score: the main data
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
-                .background(PapelCrema)
-                .padding(Espacio.lg),
+                .background(CreamPaper)
+                .padding(Spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
-                    tint = AmarilloEstrella,
+                    tint = StarYellow,
                     modifier = Modifier.size(28.dp)
                 )
-                Spacer(modifier = Modifier.size(Espacio.sm))
+                Spacer(modifier = Modifier.size(Spacing.sm))
                 Text(
-                    text = "$puntaje",
+                    text = "$score",
                     style = MaterialTheme.typography.displayLarge,
-                    color = TextoOscuro
+                    color = DarkText
                 )
             }
 
             Text(
                 text = "puntos",
                 style = MaterialTheme.typography.labelLarge,
-                color = TextoSuave
+                color = SoftText
             )
 
-            Spacer(modifier = Modifier.height(Espacio.md))
+            Spacer(modifier = Modifier.height(Spacing.md))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                DatoFinal("Tiempo", formatoTiempo(tiempoTotal))
-                DatoFinal("Precision", "$precision por ciento")
+                FinalStat("Tiempo", formatTime(totalTime))
+                FinalStat("Precision", "$precision por ciento")
             }
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        BotonJuego(
-            texto = "Jugar de nuevo",
-            icono = Icons.Default.Refresh,
-            onClick = onReiniciar
+        GameButton(
+            text = "Jugar de nuevo",
+            icon = Icons.Default.Refresh,
+            onClick = onRestart
         )
 
-        Spacer(modifier = Modifier.height(Espacio.sm))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
-        BotonJuegoSecundario(
-            texto = "Volver al inicio",
-            icono = Icons.Default.Home,
-            onClick = onVolverInicio
+        SecondaryGameButton(
+            text = "Volver al inicio",
+            icon = Icons.Default.Home,
+            onClick = onBackToStart
         )
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
     }
 }
 
 @Composable
-private fun DatoFinal(
-    etiqueta: String,
-    valor: String
+private fun FinalStat(
+    label: String,
+    value: String
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = valor,
+            text = value,
             style = MaterialTheme.typography.headlineMedium,
-            color = TextoOscuro
+            color = DarkText
         )
         Text(
-            text = etiqueta,
+            text = label,
             style = MaterialTheme.typography.labelSmall,
-            color = TextoSuave
+            color = SoftText
         )
     }
 }

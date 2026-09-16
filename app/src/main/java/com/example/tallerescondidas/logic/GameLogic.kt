@@ -1,59 +1,61 @@
 package com.example.tallerescondidas.logic
 
 object GameLogic{
-    private const val  PUNTAJE_BASE = 1000
-    private const val PENALIZACION_POR_SEGUNDO = 10
-    private const val  PENALIZACION_POR_GRADO = 5
-    private const val BONIFICACION_PRECISION = 150
-    private const val  MARGEN_BONIFICACION = 5.0
+    private const val  BASE_SCORE = 1000
+    private const val PENALTY_PER_SECOND = 10
+    private const val  PENALTY_PER_GRADE = 5
+    private const val PRECISION_BONUS = 150
+    private const val  BONUS_MARGIN = 5.0
 /**
-  *  @param: tiempoUsadoSegundos
- *   @param: diferenciaAngularGrados
+  *  @param: timeUsedSeconds
+ *   @param: angularDifferenceDegrees
 */
 
-fun tiempoAgotado (tiempoRestanteSeg: Int): Boolean{
-    return tiempoRestanteSeg <= 0
+fun timeOut (timeRemainingSec: Int): Boolean{
+    return timeRemainingSec <= 0
 }
-fun objetivoEncontrado(diferenciaAngularGrados: Double): Boolean {
-        return diferenciaAngularGrados <= 5.0
+fun targetFound(angularDifferenceDegrees: Double): Boolean {
+        return angularDifferenceDegrees <= 5.0
     }
 
-/*     Calcula la diferencia angular entre entre dos angulos de 0-360
-* ej que los anulos 340 y 10 estan a 20 grados de diferencia
+/*     Calculate the angular difference between two angles of 0-360.
+* example, the angles 340 and 10 are 20 degrees apart.
  */
 
-fun calcularDiferenciaAngular(anguloActual: Float, anguloObjetivo: Float): Double {
-    val  diferencia = Math.abs(anguloActual - anguloObjetivo).toDouble()
-    return if (diferencia > 180) 360 - diferencia else diferencia
+fun calculateAngleDifference(currentAngle: Float, angleTarget: Float): Double {
+    val  diference = Math.abs(currentAngle - angleTarget).toDouble()
+    return if (diference > 180) 360 - diference else diference
 }
 
-/* Se genera una direccion del objetivo aleatroia */
 
-    fun generarDireccionObjetivo(): Float{
-        return(0..359).random().toFloat()
+
+    /* Generates a random target direction */
+    fun generateTargetDirection(): Float {
+        return (0..359).random().toFloat()
     }
-fun calcularPuntaje(tiempoUsadoSegundos: Int, diferenciaAngularGrados: Double ): Int{
-        var puntaje = PUNTAJE_BASE
-        puntaje -= tiempoUsadoSegundos * PENALIZACION_POR_SEGUNDO
-        puntaje -= (diferenciaAngularGrados * PENALIZACION_POR_GRADO).toInt()
+fun calculateScore(timeUsedSeconds: Int, angularDifferenceDegrees: Double ): Int{
+        var score = BASE_SCORE
+        score -= timeUsedSeconds * PENALTY_PER_SECOND
+        score -= (angularDifferenceDegrees * PENALTY_PER_GRADE).toInt()
 
-      if (diferenciaAngularGrados <= MARGEN_BONIFICACION){
-            puntaje += BONIFICACION_PRECISION
+      if (angularDifferenceDegrees <= BONUS_MARGIN){
+            score += PRECISION_BONUS
       }
-         return puntaje.coerceAtLeast(0)
+         return score.coerceAtLeast(0)
     }
 
-    fun calcularPrecision(diferenciaAngularGrados: Double, margenMaximo: Double = 90.0 ): Int {
-        val precision = 100 - ( diferenciaAngularGrados / margenMaximo * 100)
+    fun calculatePrecision(angularDifferenceDegrees: Double, maxMargin: Double = 90.0): Int {
+        val precision = 100 - (angularDifferenceDegrees / maxMargin * 100)
         return precision.coerceIn(0.0, 100.0).toInt()
     }
 
-    fun obtenerEstadoTemperatura(diferenciaAngularGrados: Double ): EstadoTemperatura {
-            return when {
-                diferenciaAngularGrados <= 15.0 -> EstadoTemperatura.CALIENTE
-                diferenciaAngularGrados <= 45.0 -> EstadoTemperatura.TIBIO
-                else -> EstadoTemperatura.FRIO
-            }
+    fun getTemperatureState(angularDifferenceDegrees: Double): TemperatureState {
+        return when {
+            angularDifferenceDegrees <= 15.0 -> TemperatureState.HOT
+            angularDifferenceDegrees <= 45.0 -> TemperatureState.WARM
+            else -> TemperatureState.COLD
+        }
     }
 }
-enum class EstadoTemperatura{ FRIO, TIBIO, CALIENTE }
+
+enum class TemperatureState { COLD, WARM, HOT }

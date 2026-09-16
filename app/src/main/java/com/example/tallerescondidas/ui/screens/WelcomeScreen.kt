@@ -25,18 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.components.BotonJuego
+import com.example.tallerescondidas.ui.components.GameButton
 import com.example.tallerescondidas.ui.components.WormCanvas
-import com.example.tallerescondidas.ui.theme.CalienteRojo
-import com.example.tallerescondidas.ui.theme.Espacio
-import com.example.tallerescondidas.ui.theme.FrioAzul
-import com.example.tallerescondidas.ui.theme.MaderaMarron
-import com.example.tallerescondidas.ui.theme.MaderaOscura
-import com.example.tallerescondidas.ui.theme.PapelCrema
-import com.example.tallerescondidas.ui.theme.TextoOscuro
-import com.example.tallerescondidas.ui.theme.TextoSuave
-import com.example.tallerescondidas.ui.theme.TibioNaranja
-import com.example.tallerescondidas.ui.theme.VerdeCesped
+import com.example.tallerescondidas.ui.theme.HotRed
+import com.example.tallerescondidas.ui.theme.Spacing
+import com.example.tallerescondidas.ui.theme.ColdBlue
+import com.example.tallerescondidas.ui.theme.BrownWood
+import com.example.tallerescondidas.ui.theme.DarkWood
+import com.example.tallerescondidas.ui.theme.CreamPaper
+import com.example.tallerescondidas.ui.theme.DarkText
+import com.example.tallerescondidas.ui.theme.SoftText
+import com.example.tallerescondidas.ui.theme.WarmOrange
+import com.example.tallerescondidas.ui.theme.GrassGreen
 
 @Composable
 fun WelcomeScreen(
@@ -45,101 +45,101 @@ fun WelcomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(VerdeCesped)
+            .background(GrassGreen)
             .verticalScroll(rememberScrollState())
-            .padding(Espacio.lg),
+            .padding(Spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        // Cartel de madera: el unico elemento con textura del juego
+        // Wooden sign: the only textured element in the game
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
-                .background(MaderaMarron)
-                .border(4.dp, MaderaOscura, MaterialTheme.shapes.large)
-                .padding(vertical = Espacio.lg, horizontal = Espacio.md),
+                .background(BrownWood)
+                .border(4.dp, DarkWood, MaterialTheme.shapes.large)
+                .padding(vertical = Spacing.lg, horizontal = Spacing.md),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "ESCONDIDAS",
                     style = MaterialTheme.typography.displayLarge,
-                    color = PapelCrema
+                    color = CreamPaper
                 )
                 Text(
                     text = "Encuentra al gusanito",
                     style = MaterialTheme.typography.bodyLarge,
-                    color = PapelCrema.copy(alpha = 0.85f)
+                    color = CreamPaper.copy(alpha = 0.85f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
         ) {
-            WormCanvas(temperatura = "CALIENTE", altura = 170.dp)
+            WormCanvas(temperature = "HOT", height = 170.dp)
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
-                .background(PapelCrema)
-                .padding(Espacio.lg)
+                .background(CreamPaper)
+                .padding(Spacing.lg)
         ) {
             Text(
                 text = "Como jugar",
                 style = MaterialTheme.typography.titleLarge,
-                color = TextoOscuro
+                color = DarkText
             )
 
-            Spacer(modifier = Modifier.height(Espacio.sm))
+            Spacer(modifier = Modifier.height(Spacing.sm))
 
             Text(
                 text = "Gira tu telefono para buscar la direccion donde se " +
                         "escondio el gusanito. La barra te dice si vas bien.",
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoSuave
+                color = SoftText
             )
 
-            Spacer(modifier = Modifier.height(Espacio.md))
+            Spacer(modifier = Modifier.height(Spacing.md))
 
-            Pista(FrioAzul, "Muy frio", "Estas apuntando al lado contrario")
-            Pista(TibioNaranja, "Tibio", "Vas por buen camino, sigue girando")
-            Pista(CalienteRojo, "Caliente", "Esta casi justo delante de ti")
+            Hint(ColdBlue, "Muy frio", "Estas apuntando al lado contrario")
+            Hint(WarmOrange, "Tibio", "Vas por buen camino, sigue girando")
+            Hint(HotRed, "Caliente", "Esta casi justo delante de ti")
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        BotonJuego(
-            texto = "Nueva partida",
-            icono = Icons.Default.PlayArrow,
+        GameButton(
+            text = "Nueva partida",
+            icon = Icons.Default.PlayArrow,
             onClick = onStartGame
         )
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
     }
 }
 
 @Composable
-private fun Pista(
+private fun Hint(
     color: Color,
-    titulo: String,
-    detalle: String
+    title: String,
+    detail: String
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = Espacio.xs),
+            .padding(vertical = Spacing.xs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -149,18 +149,18 @@ private fun Pista(
                 .background(color)
         )
 
-        Spacer(modifier = Modifier.width(Espacio.sm))
+        Spacer(modifier = Modifier.width(Spacing.sm))
 
         Column {
             Text(
-                text = titulo,
+                text = title,
                 style = MaterialTheme.typography.labelLarge,
                 color = color
             )
             Text(
-                text = detalle,
+                text = detail,
                 style = MaterialTheme.typography.bodyMedium,
-                color = TextoSuave
+                color = SoftText
             )
         }
     }

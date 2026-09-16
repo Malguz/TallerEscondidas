@@ -24,101 +24,101 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.tallerescondidas.ui.components.BotonJuego
-import com.example.tallerescondidas.ui.components.BotonJuegoSecundario
-import com.example.tallerescondidas.ui.theme.CalienteRojo
-import com.example.tallerescondidas.ui.theme.CalienteRojoClaro
-import com.example.tallerescondidas.ui.theme.Espacio
-import com.example.tallerescondidas.ui.theme.PapelCrema
-import com.example.tallerescondidas.ui.theme.TextoOscuro
-import com.example.tallerescondidas.ui.theme.TextoSuave
+import com.example.tallerescondidas.ui.components.GameButton
+import com.example.tallerescondidas.ui.components.SecondaryGameButton
+import com.example.tallerescondidas.ui.theme.HotRed
+import com.example.tallerescondidas.ui.theme.LightHotRed
+import com.example.tallerescondidas.ui.theme.Spacing
+import com.example.tallerescondidas.ui.theme.CreamPaper
+import com.example.tallerescondidas.ui.theme.DarkText
+import com.example.tallerescondidas.ui.theme.SoftText
 
 @Composable
 fun DefeatScreen(
-    diferenciaFinal: Int,
-    onReiniciar: () -> Unit,
-    onVolverInicio: () -> Unit
+    finalDifference: Int,
+    onRestart: () -> Unit,
+    onBackToStart: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(CalienteRojoClaro)
+            .background(LightHotRed)
             .verticalScroll(rememberScrollState())
-            .padding(Espacio.lg),
+            .padding(Spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(Espacio.xl))
+        Spacer(modifier = Modifier.height(Spacing.xl))
 
         Icon(
             imageVector = Icons.Default.Warning,
             contentDescription = null,
-            tint = PapelCrema,
+            tint = CreamPaper,
             modifier = Modifier
                 .size(88.dp)
                 .clip(CircleShape)
-                .background(CalienteRojo)
-                .padding(Espacio.md)
+                .background(HotRed)
+                .padding(Spacing.md)
         )
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
         Text(
             text = "Se acabo el tiempo",
             style = MaterialTheme.typography.displayMedium,
-            color = CalienteRojo,
+            color = HotRed,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(Espacio.sm))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
         Text(
             text = "El gusanito sigue escondido.",
             style = MaterialTheme.typography.bodyLarge,
-            color = TextoSuave,
+            color = SoftText,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        // En vez de un mensaje de animo vacio, se dice cuanto falto:
-        // es informacion util para la siguiente partida.
+        // Instead of an empty encouragement message, tell how much was missing:
+        // it's useful information for the next game.
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
-                .background(PapelCrema)
-                .padding(Espacio.lg),
+                .background(CreamPaper)
+                .padding(Spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "$diferenciaFinal grados",
+                text = "$finalDifference grados",
                 style = MaterialTheme.typography.displaySmall,
-                color = TextoOscuro
+                color = DarkText
             )
             Text(
                 text = "te faltaban para encontrarlo",
                 style = MaterialTheme.typography.labelLarge,
-                color = TextoSuave
+                color = SoftText
             )
         }
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
 
-        BotonJuego(
-            texto = "Intentar de nuevo",
-            icono = Icons.Default.Refresh,
-            onClick = onReiniciar
+        GameButton(
+            text = "Intentar de nuevo",
+            icon = Icons.Default.Refresh,
+            onClick = onRestart
         )
 
-        Spacer(modifier = Modifier.height(Espacio.sm))
+        Spacer(modifier = Modifier.height(Spacing.sm))
 
-        BotonJuegoSecundario(
-            texto = "Volver al inicio",
-            icono = Icons.Default.Home,
-            onClick = onVolverInicio
+        SecondaryGameButton(
+            text = "Volver al inicio",
+            icon = Icons.Default.Home,
+            onClick = onBackToStart
         )
 
-        Spacer(modifier = Modifier.height(Espacio.lg))
+        Spacer(modifier = Modifier.height(Spacing.lg))
     }
 }

@@ -20,11 +20,11 @@ import com.example.tallerescondidas.ui.screens.DefeatScreen
 import com.example.tallerescondidas.ui.screens.GameScreen
 import com.example.tallerescondidas.ui.screens.VictoryScreen
 import com.example.tallerescondidas.ui.screens.WelcomeScreen
-import com.example.tallerescondidas.ui.theme.TallerEscondidasTheme
-import com.example.tallerescondidas.ui.theme.VerdeCesped
+import com.example.tallerescondidas.ui.theme.HiddenWorkshopTheme
+import com.example.tallerescondidas.ui.theme.GrassGreen
 import kotlinx.coroutines.delay
 
-private const val DURACION_PARTIDA = 25
+private const val GAME_DURATION = 25
 
 class MainActivity : ComponentActivity() {
 
@@ -36,13 +36,13 @@ class MainActivity : ComponentActivity() {
         orientationProvider = OrientationProvider(this)
 
         setContent {
-            TallerEscondidasTheme {
+            HiddenWorkshopTheme {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(VerdeCesped)
+                        .background(GrassGreen)
                 ) {
-                    PantallaPrincipal(orientationProvider)
+                    MainScreen(orientationProvider)
                 }
             }
         }
@@ -60,93 +60,93 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PantallaPrincipal(
+fun MainScreen(
     orientationProvider: OrientationProvider
 ) {
-    var estadoActual by remember { mutableStateOf(EstadoJuego.INICIO) }
-    var tiempoRestante by remember { mutableIntStateOf(DURACION_PARTIDA) }
-    var tiempoUsado by remember { mutableIntStateOf(0) }
+    var currentState by remember { mutableStateOf(EstadoJuego.BEGINNING) }
+    var timeRemaining by remember { mutableIntStateOf(GAME_DURATION) }
+    var timeUsed by remember { mutableIntStateOf(0) }
 
-    var direccionObjetivo by remember {
-        mutableStateOf(GameLogic.generarDireccionObjetivo())
+    var targetDirection by remember {
+        mutableStateOf(GameLogic.generateTargetDirection())
     }
 
-    // Resultados congelados en el momento de terminar la partida
-    var puntajeFinal by remember { mutableIntStateOf(0) }
-    var precisionFinal by remember { mutableIntStateOf(0) }
-    var tiempoFinal by remember { mutableIntStateOf(0) }
-    var diferenciaFinal by remember { mutableIntStateOf(0) }
+    // Results frozen at the moment of game over
+    var finalScore by remember { mutableIntStateOf(0) }
+    var finalPrecision by remember { mutableIntStateOf(0) }
+    var finalTime by remember { mutableIntStateOf(0) }
+    var finalDifference by remember { mutableIntStateOf(0) }
 
     val azimuth by orientationProvider.azimuth
 
-    val diferencia = GameLogic.calcularDiferenciaAngular(azimuth, direccionObjetivo)
-    val temperatura = GameLogic.obtenerEstadoTemperatura(diferencia)
+    val difference = GameLogic.calculateAngleDifference(azimuth, targetDirection)
+    val temperature = GameLogic.getTemperatureState(difference)
 
-    // El puntaje se recalcula solo: no hace falta guardarlo en un estado
-    // aparte, y asi nunca queda desincronizado con la diferencia actual.
-    val puntaje = GameLogic.calcularPuntaje(tiempoUsado, diferencia)
+    // Score is recalculated automatically: no need to save it in a separate state,
+    // so it never gets out of sync with the current difference.
+    val score = GameLogic.calculateScore(timeUsed, difference)
 
-    fun nuevaPartida() {
-        tiempoRestante = DURACION_PARTIDA
-        tiempoUsado = 0
-        direccionObjetivo = GameLogic.generarDireccionObjetivo()
-        estadoActual = EstadoJuego.JUGANDO
+    fun newGame() {
+        timeRemaining = GAME_DURATION
+        timeUsed = 0
+        targetDirection = GameLogic.generateTargetDirection()
+        currentState = EstadoJuego.PLAYING
     }
 
-    // Victoria
-    LaunchedEffect(diferencia, estadoActual) {
-        if (estadoActual == EstadoJuego.JUGANDO && GameLogic.objetivoEncontrado(diferencia)) {
-            puntajeFinal = puntaje
-            precisionFinal = GameLogic.calcularPrecision(diferencia)
-            tiempoFinal = tiempoUsado
-            estadoActual = EstadoJuego.VICTORIA
+    // VICTORY
+    LaunchedEffect(difference, currentState) {
+        if (currentState == EstadoJuego.PLAYING && GameLogic.targetFound(difference)) {
+            finalScore = score
+            finalPrecision = GameLogic.calculatePrecision(difference)
+            finalTime = timeUsed
+            currentState = EstadoJuego.VICTORY
         }
     }
 
-    // Cronometro
-    LaunchedEffect(estadoActual) {
-        if (estadoActual == EstadoJuego.JUGANDO) {
-            while (tiempoRestante > 0 && estadoActual == EstadoJuego.JUGANDO) {
+    // Timer
+    LaunchedEffect(currentState) {
+        if (currentState == EstadoJuego.PLAYING) {
+            while (timeRemaining > 0 && currentState == EstadoJuego.PLAYING) {
                 delay(1000)
-                tiempoRestante--
-                tiempoUsado++
+                timeRemaining--
+                timeUsed++
             }
 
-            if (estadoActual == EstadoJuego.JUGANDO && GameLogic.tiempoAgotado(tiempoRestante)) {
-                diferenciaFinal = diferencia.toInt()
-                estadoActual = EstadoJuego.DERROTA
+            if (currentState == EstadoJuego.PLAYING && GameLogic.timeOut(timeRemaining)) {
+                finalDifference = difference.toInt()
+                currentState = EstadoJuego.DEFEAT
             }
         }
     }
 
-    when (estadoActual) {
+    when (currentState) {
 
-        EstadoJuego.INICIO -> WelcomeScreen(
-            onStartGame = { nuevaPartida() }
+        EstadoJuego.BEGINNING -> WelcomeScreen(
+            onStartGame = { newGame() }
         )
 
-        EstadoJuego.JUGANDO -> GameScreen(
-            tiempoRestante = tiempoRestante,
-            puntaje = puntaje,
-            temperatura = temperatura.name,
-            diferencia = diferencia,
+        EstadoJuego.PLAYING -> GameScreen(
+            timeRemaining = timeRemaining,
+            score = score,
+            temperature = temperature.name,
+            difference = difference,
             azimuth = azimuth,
-            direccionObjetivo = direccionObjetivo,
-            onReiniciarClick = { nuevaPartida() }
+            targetDirection = targetDirection,
+            onRestartClick = { newGame() }
         )
 
-        EstadoJuego.VICTORIA -> VictoryScreen(
-            puntaje = puntajeFinal,
-            tiempoTotal = tiempoFinal,
-            precision = precisionFinal,
-            onReiniciar = { nuevaPartida() },
-            onVolverInicio = { estadoActual = EstadoJuego.INICIO }
+        EstadoJuego.VICTORY -> VictoryScreen(
+            score = finalScore,
+            totalTime = finalTime,
+            precision = finalPrecision,
+            onRestart = { newGame() },
+            onBackToStart = { currentState = EstadoJuego.BEGINNING }
         )
 
-        EstadoJuego.DERROTA -> DefeatScreen(
-            diferenciaFinal = diferenciaFinal,
-            onReiniciar = { nuevaPartida() },
-            onVolverInicio = { estadoActual = EstadoJuego.INICIO }
+        EstadoJuego.DEFEAT -> DefeatScreen(
+            finalDifference = finalDifference,
+            onRestart = { newGame() },
+            onBackToStart = { currentState = EstadoJuego.BEGINNING }
         )
     }
 }

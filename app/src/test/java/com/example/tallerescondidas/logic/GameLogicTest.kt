@@ -6,30 +6,31 @@ import org.junit.Test
 class GameLogicTest {
 
    @Test
-   fun `tiempo agotado cuando llega a cero`(){
-       assertEquals(true, GameLogic.tiempoAgotado(0))
-       assertEquals(false, GameLogic.tiempoAgotado(5))
+   fun `time out when reaches zero`(){
+       assertEquals(true, GameLogic.timeOut(0))
+       assertEquals(false, GameLogic.timeOut(5))
    }
 
     @Test
-    fun `puntaje maximo cuando el tiempo y la diferencia angular son cero`() {
-        val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 0, diferenciaAngularGrados = 0.0)
-        assertEquals(1150, puntaje)
+    fun `max score when time and angular difference are zero`() {
+        val score = GameLogic.calculateScore(timeUsedSeconds = 0, angularDifferenceDegrees = 0.0)
+        assertEquals(1150, score)
     }
 
     @Test
-    fun `puntaje nunca es negativo`() {
-        val puntaje = GameLogic.calcularPuntaje(tiempoUsadoSegundos = 500, diferenciaAngularGrados = 180.0)
-        assertEquals(0, puntaje)
+    fun `score is never negative`() {
+        val score = GameLogic.calculateScore(timeUsedSeconds = 500, angularDifferenceDegrees = 180.0)
+        assertEquals(0, score)
+    }
+
+    @Test
+    fun `angular difference considers crossing 0 degrees`() {
+        val difference = GameLogic.calculateAngleDifference(currentAngle = 350f, angleTarget = 10f)
+        assertEquals(20.0, difference, 0.01)
     }
     @Test
-    fun `diferencia angular considera el cruce por 0 grados`() {
-        val diferencia = GameLogic.calcularDiferenciaAngular(anguloActual = 350f, anguloObjetivo = 10f)
-        assertEquals(20.0, diferencia, 0.01)
-    }
-    @Test
-    fun `objetivo encontrado dentro del margen`() {
-        assertEquals(true, GameLogic.objetivoEncontrado(3.0))
-        assertEquals(false, GameLogic.objetivoEncontrado(15.0))
+    fun `target found within margin`() {
+        assertEquals(true, GameLogic.targetFound(3.0))
+        assertEquals(false, GameLogic.targetFound(15.0))
     }
 }

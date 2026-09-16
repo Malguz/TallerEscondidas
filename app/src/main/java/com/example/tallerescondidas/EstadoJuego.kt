@@ -1,14 +1,14 @@
 package com.example.tallerescondidas
 
 /**
- * EstadoTemperatura vive unicamente en GameLogic.kt (paquete .logic).
- * Antes existia una copia aqui: compilaba porque estaban en paquetes
- * distintos, pero era una trampa esperando a confundir un import.
- * Se elimino esa copia duplicada.
+ * TemperatureState lives only in GameLogic.kt (.logic package).
+ * Previously there was a duplicate here: it compiled because they were in
+ * different packages, but it was a trap waiting to confuse an import.
+ * That duplicate copy was removed.
  */
 enum class EstadoJuego {
-    INICIO,
-    JUGANDO,
-    VICTORIA,
-    DERROTA
+    BEGINNING,
+    PLAYING,
+    VICTORY,
+    DEFEAT
 }
